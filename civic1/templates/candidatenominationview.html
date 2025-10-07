@@ -1,0 +1,82 @@
+{% extends 'candidateheader.html' %}
+{% block content %}
+<html>
+    <head>
+        <title>My Nominations</title>
+    </head>
+    <body>
+        <center>
+            <!-- Page main heading -->
+            <h2 class="mt-3 mb-4"><b>My Nominations</b></h2>
+
+            {% if user %}
+                <!-- Table starts -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Family Name</th>
+                            <th>Name on Ballot</th>
+                            <th>Ward</th>
+                            <th>Pincode</th>
+                            <th>Election Type</th>
+                            <th>Election Date</th>
+                            <th>Status</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in user %}
+                        <tr>
+                            <td>{{ a.familyname }}</td>
+                            <td>{{ a.nameonballotpaper }}</td>
+                            <td>{{ a.ward }}</td>
+                            <td>{{ a.pincode }}</td>
+                            <td>{{ a.electionid.electiontype }}</td>
+                            <td>{{ a.electionid.electiondate }}</td>
+                            <td>
+                                {% if a.status != 1 and a.status != 2 %}
+                                    {% if a.cancelstatus == 0 %}
+                                    <a class="btn btn-primary" href="{% url 'candidatecancelstatus' a.id %}">Cancel</a>
+                                    {% else %}
+                                    Cancelled
+                                    {% endif %}
+                                {% elif a.status == 1 %}
+                                    Approved
+                                {% elif a.status == 2 %}
+                                    Rejected
+                                {% endif %}
+                            </td>
+                            <td>
+    {% if a.status == 1 %}
+        {% if a.electionid.electiondate < now.date %}
+            Completed
+        {% elif a.electionid.electiondate == now.date and a.electionid.endtime <= now.time %}
+            Completed
+        {% elif a.electionid.electiondate > now.date %}
+            Upcoming
+        {% else %}
+            Ongoing
+        {% endif %}
+    {% else %}
+     
+    {% endif %}
+</td>
+<td>
+    {% if a.status == 1 and a.electionid.publishstatus == 1 %}
+        <a href="{% url 'candidateviewmyresult' a.id %}" class="btn btn-success">Result</a>
+    {% else %}
+        
+    {% endif %}
+</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="alert alert-info"><b>No nominations available.</b></p>
+            {% endif %}
+        </center>
+    </body>
+</html>
+{% endblock %}

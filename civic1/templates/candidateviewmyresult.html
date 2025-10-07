@@ -1,0 +1,126 @@
+{% extends 'candidateheader.html' %}
+{% block content %}
+<html>
+<head>
+    <title>My Election Result</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+        }
+
+        table {
+            width: 100%;
+            max-width: 700px;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        table th {
+            background-color: #f0f4f8;
+            font-weight: 600;
+            color: #333;
+        }
+
+        table td {
+            color: #555;
+        }
+
+        table tr:last-child td {
+            border-bottom: none;
+        }
+
+        h2 {
+            color: #2c3e50;
+        }
+
+        .alert {
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h2 class="mt-3 mb-4"><b>My Election Result</b></h2>
+
+        {% if error %}
+            <p class="alert alert-warning"><b>{{ error }}</b></p>
+        {% else %}
+            <table>
+                <tr>
+                    <th>Family Name</th>
+                    <td>{{ nomination.familyname }}</td>
+                </tr>
+                <tr>
+                    <th>Name on Ballot</th>
+                    <td>{{ nomination.nameonballotpaper }}</td>
+                </tr>
+                <tr>
+                    <th>Ward</th>
+                    <td>{{ nomination.ward }}</td>
+                </tr>
+                <tr>
+                    <th>Election Type</th>
+                    <td>{{ nomination.electionid.electiontype }}</td>
+                </tr>
+                <tr>
+                    <th>Election Date</th>
+                    <td>{{ nomination.electionid.electiondate }}</td>
+                </tr>
+                <tr>
+                    <th>Party</th>
+                    <td>
+                        {% if nomination.party %}
+                            {{ nomination.party.partyname }}
+                        {% else %}
+                            Independent
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Party Logo</th>
+                    <td>
+  {% if nomination.party and nomination.party.partyname != "Independent" %}
+    {% if nomination.party.partylogo %}
+        <img src="{{ nomination.party.partylogo.url }}" alt="Party Logo" height="60px" width="60px">
+    {% else %}
+        <img src="/media/photos/default.png" alt="Default Logo" height="60px" width="60px">
+    {% endif %}
+{% elif nomination.independentpartylogo %}
+    <img src="{{ nomination.independentpartylogo.url }}" alt="Independent Logo" height="60px" width="60px">
+{% else %}
+    <img src="/media/photos/default.png" alt="Default Logo" height="60px" width="60px">
+{% endif %}
+
+
+</td>
+                </tr>
+                <tr>
+                    <th>Total Votes Received</th>
+                    <td><b>{{ my_votes }}</b></td>
+                </tr>
+                <tr>
+                    <th>Result</th>
+                    {% if result_status == "Won" %}
+                        <td style="color:green;"><b>Won</b></td>
+                    {% else %}
+                        <td style="color:red;"><b>Lost</b></td>
+                    {% endif %}
+                </tr>
+            </table>
+            <br>
+        {% endif %}
+    </center>
+</body>
+</html>
+{% endblock %}
